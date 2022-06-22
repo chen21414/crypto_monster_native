@@ -1,4 +1,5 @@
 import { StyleSheet, Text, View } from "react-native";
+import Header from "./components/Header";
 import { Router, Route, Link } from "./react-router";
 
 const Home = () => <Text>Home</Text>;
@@ -8,6 +9,7 @@ const About = () => <Text>About</Text>;
 const App = () => (
   <Router>
     <View style={styles.container}>
+      <Header />
       <View style={styles.nav}>
         <Link to="/">
           <Text>Home</Text>
