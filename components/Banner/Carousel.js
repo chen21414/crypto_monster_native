@@ -1,23 +1,55 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
-  StyleSheet,
   Text,
-  Image,
-  Dimension,
+  StyleSheet,
+  Dimensions,
   FlatList,
   Animated,
-  Dimensions,
 } from "react-native";
+import CarouselItem from "./CarouselItem";
 
-const { width, height } = Dimensions.get("window");
+const { width, heigth } = Dimensions.get("window");
+
+//let flatList;
+
+function infiniteScroll(dataList) {
+  if (dataList) {
+    const numberOfData = dataList.length;
+    let scrollValue = 0;
+    let scrolled = 0;
+
+    setInterval(function () {
+      scrolled++;
+      if (scrolled < numberOfData) scrollValue = scrollValue + width;
+      else {
+        scrollValue = 0;
+        scrolled = 0;
+      }
+
+      this.flatList.scrollToOffset({ animated: true, offset: scrollValue });
+    }, 3000);
+  }
+}
 
 const Carousel = ({ data }) => {
+  const scrollX = new Animated.Value(0);
+  let position = Animated.divide(scrollX, width);
+  const [dataList, setDataList] = useState(data);
+
+  useEffect(() => {
+    setDataList(data);
+    infiniteScroll(dataList);
+  });
+
   if (data && data.length) {
     return (
       <View>
         <FlatList
           data={data}
+          ref={(flatList) => {
+            this.flatList = flatList;
+          }}
           keyExtractor={(item, index) => "key" + index}
           horizontal
           pagingEnabled
@@ -25,16 +57,19 @@ const Carousel = ({ data }) => {
           snapToAlignment="center"
           scrollEventThrottle={16}
           decelerationRate={"fast"}
-          showsVerticalScrollIndicator={false}
+          showsHorizontalScrollIndicator={false}
           renderItem={({ item }) => {
             return <CarouselItem item={item} />;
           }}
+          onScroll={Animated.event([
+            { nativeEvent: { contentOffset: { x: scrollX } } },
+          ])}
         />
 
-        <View style={StyleSheet.dotView}>
+        <View style={styles.dotView}>
           {data.map((_, i) => {
             let opacity = position.interpolate({
-              inputrange: [i - 1, i, i + 1],
+              inputRange: [i - 1, i, i + 1],
               outputRange: [0.3, 1, 0.3],
               extrapolate: "clamp",
             });
@@ -56,6 +91,13 @@ const Carousel = ({ data }) => {
       </View>
     );
   }
+
+  console.log("Please provide Images");
+  return null;
 };
+
+const styles = StyleSheet.create({
+  dotView: { flexDirection: "row", justifyContent: "center" },
+});
 
 export default Carousel;
