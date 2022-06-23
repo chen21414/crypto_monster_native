@@ -1,6 +1,8 @@
 import { StyleSheet, Text, View } from "react-native";
 import Header from "./components/Header";
 import { Router, Route, Link } from "./react-router";
+import { dummyData } from "./components/Banner/data/Data";
+import Carousel from "./components/Banner/Carousel";
 
 const Home = () => <Text>Home</Text>;
 
@@ -10,6 +12,7 @@ const App = () => (
   <Router>
     <View style={styles.container}>
       <Header />
+      <Carousel data={dummyData} />
       <View style={styles.nav}>
         <Link to="/">
           <Text>Home</Text>
